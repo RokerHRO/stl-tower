@@ -1,6 +1,8 @@
 #ifndef STL_TOWER_PoINT_HH
 #define STL_TOWER_PoINT_HH
 
+#include <cmath>
+
 template<unsigned DIM>
 struct Point;
 
@@ -33,6 +35,14 @@ struct Point<2>
 		x*=d; y*=d;
 		return *this;
 	}
+	
+	Point<2>& operator/=(double d)
+	{
+		x/=d; y/=d;
+		return *this;
+	}
+	
+	double length() const { return hypot(x,y); }
 
 	double x,y;
 };
@@ -66,6 +76,14 @@ struct Point<3>
 		x*=d; y*=d; z*=d;
 		return *this;
 	}
+	
+	Point<3>& operator/=(double d)
+	{
+		x/=d; y/=d; z/=d;
+		return *this;
+	}
+	
+	double length() const { return sqrt(x*x + y*y + z*z); }
 
 	double x,y,z;
 };
@@ -91,6 +109,21 @@ Point<DIM> operator*(Point<DIM> p, double d)
 {
 	return p*=d;
 }
+
+template<unsigned DIM>
+inline
+Point<DIM> operator/(Point<DIM> p, double d)
+{
+	return p/=d;
+}
+
+template<unsigned DIM>
+inline
+Point<DIM> normalize(Point<DIM> p)
+{
+	return p / p.length();
+}
+
 
 typedef Point<3> Point3d;
 typedef Point<2> Point2d;

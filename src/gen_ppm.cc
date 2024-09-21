@@ -15,6 +15,19 @@ struct RGB
 	uint8_t r,g,b;
 };
 
+RGB ramp(double d)
+{
+	if(d<0) d=0.0;
+	if(d>1) d=1.0;
+	
+	if(d<0.5)
+	{
+		return RGB(512*d, 0, 255);
+	}
+	
+	return RGB(255, 512*(d-0.5), 255);
+}
+
 const RGB White (255, 255, 255);
 const RGB Red   (255,   0,   0);
 const RGB Green (  0, 255,   0);
@@ -31,9 +44,12 @@ void print_ppm()
 
 void setPixel(unsigned x, unsigned y, RGB color)
 {
-	if(x<1024 && y<1024)
+	if(x<1023 && y<1023)
 	{
-		img[y][x] = color;
+		img[y  ][x] = color;
+		img[y+1][x] = color;
+		img[y  ][x+1] = color;
+		img[y+1][x+1] = color;
 	}
 }
 
@@ -72,7 +88,7 @@ int main(int argc, char** argv)
 	for(double phi = 0.0; phi<c.length(); phi += M_PI/180/4)
 	{
 		Point2d p = c(phi);
-		draw(p.x, p.y, White);
+		draw(p.x, p.y, ramp(phi/c.length()));
 	}
 	
 	print_ppm();

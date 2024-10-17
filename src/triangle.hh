@@ -5,6 +5,12 @@
 
 struct Triangle
 {
+	Triangle() = default;
+	
+	Triangle(Point3d _a, Point3d _b, Point3d _c)
+	: a{_a}, b{_b}, c{_c}
+	{}
+	
 	Point3d a,b,c;
 	
 	Point3d normal() const

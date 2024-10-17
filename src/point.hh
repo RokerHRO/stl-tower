@@ -124,6 +124,13 @@ Point<DIM> normalize(Point<DIM> p)
 	return p / p.length();
 }
 
+template<unsigned DIM>
+inline
+Point<DIM> operator-(Point<DIM> p)
+{
+	return Point<DIM>{} - p;
+}
+
 
 typedef Point<3> Point3d;
 typedef Point<2> Point2d;

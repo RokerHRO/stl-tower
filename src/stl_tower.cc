@@ -2,7 +2,7 @@
 #include "stl.hh"
 #include "triangle.hh"
 
-const unsigned Steps = 20;
+const unsigned Steps = 90;
 
 STL stl;
 
@@ -19,21 +19,29 @@ void ground_plane(const Curve& c)
 	double x = p.x;
 	
 	Point3d b0{c(0.0).x, 0, 0};
+	Point3d p0{c.P().x, 0, 0.5};
 	
 	for(unsigned step=1; step<=Steps; ++step, b+=db, x-=dx)
 	{
 		const Point2d q = c(b);
 		const Point3d b1{q.x, q.y, 0};
 		
-		if(q.x > c.P().x)
+		if(q.x > c.P().x) // first quarter circle
 		{
 			stl.add(PP, b0, b1);
-		}else if(q.x < -c.P().x)
+		}else if(q.x < -c.P().x) // last quarter circle
 		{
-			stl.add(MP, b0, b1);
-		}else{
-			const Point3d p1{ q.x, 0, 0};
-			const Point3d p0{b0.x, 0, 0};
+			if(p0.x > -c.P().x) // but add a last viereck
+			{
+				const Point3d p1{ -c.P().x, 0, 0.5};
+				stl.add(p1, p0, b0);
+				stl.add(p1, b0, b1);
+				p0.x = -c.P().x - 0.1;
+			}else{
+				stl.add(MP, b0, b1);
+			}
+		}else{ // journey between the 2 quarter circles
+			const Point3d p1{ q.x, 0, 0.5};
 			
 			stl.add(p1, p0, b0);
 			stl.add(p1, b0, b1);
@@ -41,9 +49,10 @@ void ground_plane(const Curve& c)
 				step,
 				p1.x, p1.y, p1.z,
 				b1.x, b1.y, b1.z);
+			p0 = p1;
 		}
 		
-		b0=b1;
+		b0 = b1;
 	}
 	
 	const unsigned num = stl.size();
